@@ -16,14 +16,17 @@ import Auth from './users/pages/Auth';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const login = useCallback(() => {
     setIsLoggedIn(true);
   }, []);
+
   const logout = useCallback(() => {
     setIsLoggedIn(false);
   }, []);
+
   return (
-    <AuthContext.Provider value={(isLoggedIn, login, logout)}>
+    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
       <Router>
         <MainNavigation />
         <main>
