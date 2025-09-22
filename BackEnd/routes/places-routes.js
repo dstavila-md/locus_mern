@@ -31,4 +31,15 @@ router.get('/:placeId', (req, res, next) => {
   }
 });
 
+router.get('/user/:userId', (req, res, next) => {
+  const userId = req.params.userId;
+  console.log(userId);
+  const place = DUMMY_PLACES.find((place) => place.creator === userId);
+  if (place) {
+    res.send({ place });
+  } else {
+    res.status(404).send({ place: 'Not found' });
+  }
+});
+
 module.exports = router;
