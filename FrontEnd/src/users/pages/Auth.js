@@ -17,7 +17,7 @@ const Auth = (props) => {
   // const auth = useContext(AuthContext);
   const { login } = useContext(AuthContext);
 
-  const [isLoginMode, setIsLoginMode] = useState(false);
+  const [isLoginMode, setIsLoginMode] = useState(true);
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: { value: '', isValid: false },
