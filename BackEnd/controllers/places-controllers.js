@@ -64,7 +64,12 @@ const updatePlaceById = (req, res, next) => {
   res.status(200).json({ place: updatedPlace });
 };
 
-const deletePlaceById = (req, res, next) => {};
+const deletePlaceById = (req, res, next) => {
+  const placeId = req.params.placeId;
+  const placeIndex = DUMMY_PLACES.findIndex((place) => place.id === placeId);
+  DUMMY_PLACES.splice(placeIndex, 1);
+  res.status(200).json({ message: 'Place deleted' });
+};
 
 module.exports = {
   getPlaceById,
