@@ -41,8 +41,6 @@ const getPlacesByUserId = (req, res, next) => {
 const createPlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log(errors);
-
     return next(
       new HttpError('Invalid inputs passed, please check your data.', 422)
     );
