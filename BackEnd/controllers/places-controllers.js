@@ -62,10 +62,23 @@ const createPlace = (req, res, next) => {
 const updatePlaceById = (req, res, next) => {
   const placeId = req.params.placeId;
   const { title, description } = req.body;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log(errors);
+
+    throw new HttpError('Invalid inputs passed, please check your data.', 422);
+  }
+
   const updatedPlace = {
     ...DUMMY_PLACES.find((place) => place.id === placeId),
   };
   const placeIndex = DUMMY_PLACES.findIndex((place) => place.id === placeId);
+
+  if (!placeIndex) {
+    throw new HttpError('Invalid place id', 422);
+  }
+
   updatedPlace.title = title;
   updatedPlace.description = description;
   DUMMY_PLACES[placeIndex] = updatedPlace;
@@ -75,6 +88,11 @@ const updatePlaceById = (req, res, next) => {
 const deletePlaceById = (req, res, next) => {
   const placeId = req.params.placeId;
   const placeIndex = DUMMY_PLACES.findIndex((place) => place.id === placeId);
+
+  if (!placeIndex) {
+    throw new HttpError('Could not find a place for that id', 422);
+  }
+
   DUMMY_PLACES.splice(placeIndex, 1);
   res.status(200).json({ message: 'Place deleted' });
 };
