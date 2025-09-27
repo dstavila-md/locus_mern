@@ -98,7 +98,7 @@ const createPlace = async (req, res, next) => {
   res.status(201).json({ place: createdPlace });
 };
 
-const updatePlaceById = (req, res, next) => {
+const updatePlaceById = async (req, res, next) => {
   const placeId = req.params.placeId;
   const { title, description } = req.body;
 
@@ -109,19 +109,33 @@ const updatePlaceById = (req, res, next) => {
     throw new HttpError('Invalid inputs passed, please check your data.', 422);
   }
 
-  const updatedPlace = {
-    ...DUMMY_PLACES.find((place) => place.id === placeId),
-  };
-  const placeIndex = DUMMY_PLACES.findIndex((place) => place.id === placeId);
-
-  if (!placeIndex) {
-    throw new HttpError('Invalid place id', 422);
+  let place;
+  try {
+    place = await Place.findById(placeId).exec();
+  } catch (error) {
+    return next(
+      new HttpError('Something went wrong, could not find a place', 500)
+    );
   }
 
-  updatedPlace.title = title;
-  updatedPlace.description = description;
-  DUMMY_PLACES[placeIndex] = updatedPlace;
-  res.status(200).json({ place: updatedPlace });
+  if (!place) {
+    return next(new HttpError('Could not find a place for that id', 404));
+  }
+
+  place.title = title;
+  place.description = description;
+
+  try {
+    await place.save();
+  } catch (error) {
+    return next(
+      new HttpError('Something went wrong, could not update place', 500)
+    );
+  }
+
+  // Places.findByIdAndUpdate(placeId, { title, description}, { new: true, runValidators: true}
+
+  res.status(200).json({ place: place.toObject({ getters: true }) });
 };
 
 const deletePlaceById = (req, res, next) => {
