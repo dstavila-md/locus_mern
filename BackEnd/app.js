@@ -1,9 +1,12 @@
 const epxress = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const HttpError = require('./models/http-error');
 const placesRoutes = require('./routes/places-routes');
 const userRoutes = require('./routes/users-routes');
+
+const { mongoURI: MONGO_URI } = require('./utils/keys');
 
 const app = epxress();
 
@@ -26,4 +29,10 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || 'An unknown error occured.' });
 });
 
-app.listen(5000);
+mongoose
+  .connect(MONGO_URI)
+  .then(() => {
+    console.log('Connection successful - starting the server');
+    app.listen(5000);
+  })
+  .catch((err) => console.log(err));
