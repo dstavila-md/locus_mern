@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../utils/location');
+const Place = require('../models/place');
 
 const DUMMY_PLACES = [
   {
@@ -46,7 +47,7 @@ const createPlace = async (req, res, next) => {
     );
   }
 
-  const { title, description, address, creator } = req.body;
+  const { title, description, address, creator, image } = req.body;
 
   let coordinates;
   try {
@@ -55,16 +56,20 @@ const createPlace = async (req, res, next) => {
     return next(error);
   }
 
-  const createdPlace = {
-    id: uuidv4(),
+  const createdPlace = new Place({
     title,
     description,
-    location: coordinates,
     address,
+    location: coordinates,
+    image: image || 'https://picsum.photos/200',
     creator,
-  };
+  });
 
-  DUMMY_PLACES.push(createdPlace);
+  try {
+    await createdPlace.save();
+  } catch (error) {
+    return next(error);
+  }
 
   res.status(201).json({ place: createdPlace });
 };
