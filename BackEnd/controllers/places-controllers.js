@@ -6,6 +6,7 @@ const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../utils/location');
 const Place = require('../models/place');
 const User = require('../models/user');
+const user = require('../models/user');
 
 const getPlaceById = async (req, res, next) => {
   const placeId = req.params.placeId;
@@ -154,7 +155,8 @@ const deletePlaceById = async (req, res, next) => {
   let place;
   let creatorId;
   try {
-    place = await Place.findById(placeId).exec();
+    place = await Place.findById(placeId).populate('creator').exec();
+    // place = await Place.findById(placeId).exec();
   } catch (error) {
     return next(
       new HttpError('Something went wrong, could not delete place', 500)
@@ -164,17 +166,23 @@ const deletePlaceById = async (req, res, next) => {
   if (!place) {
     return next(new HttpError('Could not find place for this id', 404));
   }
-  creatorId = place.creator;
+  // creatorId = place.creator;
+  creator = place.creator;
 
   try {
     const session = await mongoose.startSession();
     session.startTransaction();
-    await User.findByIdAndUpdate(
-      { _id: creatorId },
-      { $pull: { places: placeId } },
-      { session }
-    ).exec();
-    await Place.deleteOne({ _id: placeId }, { session }).exec();
+
+    creator.places.pull(place);
+    await creator.save({ session });
+
+    // await User.findByIdAndUpdate(
+    //   { _id: creatorId },
+    //   { $pull: { places: placeId } },
+    //   { session }
+    // ).exec();
+    // await Place.deleteOne({ _id: placeId }, { session }).exec();
+    await place.deleteOne({ session });
     await session.commitTransaction();
   } catch (error) {
     console.log(error);
