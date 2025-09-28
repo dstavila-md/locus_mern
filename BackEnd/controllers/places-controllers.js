@@ -35,6 +35,7 @@ const getPlacesByUserId = async (req, res, next) => {
   let mongoPlaces;
   try {
     mongoPlaces = await Place.find({ creator: userId }).exec();
+    // mongoPlaces = await User.findById(userId).populate('places');
   } catch (error) {
     return next(
       new HttpError('Something went wrong, could not find places', 500)
