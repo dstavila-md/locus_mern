@@ -153,7 +153,7 @@ const deletePlaceById = async (req, res, next) => {
   const placeId = req.params.placeId;
 
   let place;
-  let creatorId;
+  // let creatorId;
   try {
     place = await Place.findById(placeId).populate('creator').exec();
     // place = await Place.findById(placeId).exec();
