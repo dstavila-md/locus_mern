@@ -1,4 +1,3 @@
-const { v4: uuidv4 } = require('uuid');
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 
@@ -6,7 +5,6 @@ const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../utils/location');
 const Place = require('../models/place');
 const User = require('../models/user');
-const user = require('../models/user');
 
 const getPlaceById = async (req, res, next) => {
   const placeId = req.params.placeId;
