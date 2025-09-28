@@ -1,46 +1,32 @@
 import React, { useEffect, useState } from 'react';
 
+import { useHttpClient } from '../../shared/hooks/http-hook';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 import UsersList from '../components/UsersList';
 
 const Users = () => {
   const [loadedUsers, setLoadedUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   useEffect(() => {
-    const sendRequest = async () => {
-      setIsLoading(true);
+    const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/users');
-        if (!response.ok) {
-          throw new Error('Failed to fetch users');
-        }
-        const data = await response.json();
-        setLoadedUsers(data.users);
+        const responseData = await sendRequest(
+          'http://localhost:5000/api/users'
+        );
+        setLoadedUsers(responseData.users);
       } catch (error) {
-        setError(error.message);
+        // Error handling is managed in the useHttpClient hook
       }
-      setIsLoading(false);
     };
 
-    sendRequest();
-
-    // fetch('http://localhost:5000/api/users')
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     console.log(data);
-    //   });
-  }, []);
-
-  const errorHandler = () => {
-    setError(null);
-  };
+    fetchUsers();
+  }, [sendRequest]);
 
   return (
     <React.Fragment>
-      {error && <ErrorModal error={error} onClear={errorHandler} />}
+      {error && <ErrorModal error={error} onClear={clearError} />}
       {isLoading && (
         <div className='center'>
           <LoadingSpinner />
