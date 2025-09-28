@@ -28,7 +28,7 @@ const signup = async (req, res, next) => {
     );
   }
 
-  const { name, email, password, image, places } = req.body;
+  const { name, email, password, image } = req.body;
 
   let userExists;
   try {
@@ -52,7 +52,7 @@ const signup = async (req, res, next) => {
       email,
       password,
       image: image || 'https://picsum.photos/200',
-      places,
+      places: [],
     });
     await createdUser.save();
   } catch (error) {
