@@ -53,15 +53,17 @@ const Auth = (props) => {
       }
     } else {
       try {
+        const formData = new FormData();
+        formData.append('name', formState.inputs.name.value);
+        formData.append('email', formState.inputs.email.value);
+        formData.append('password', formState.inputs.password.value);
+        formData.append('image', formState.inputs.image.value);
+
         const url = 'http://localhost:5000/api/users/signup';
         const method = 'POST';
-        const body = JSON.stringify({
-          name: formState.inputs.name.value,
-          email: formState.inputs.email.value,
-          password: formState.inputs.password.value,
-        });
+        const body = formData;
         const headers = {
-          'Content-Type': 'application/json',
+          // 'Content-Type': 'application/json', // Not needed when using FormData
         };
         const responseData = await sendRequest(url, method, body, headers);
 
