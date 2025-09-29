@@ -13,7 +13,7 @@ import { useHttpClient } from '../../shared/hooks/http-hook';
 import './PlaceItem.css';
 
 const PlaceItem = (props) => {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, userId } = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const [showMap, setShowMap] = useState(false);
@@ -97,8 +97,10 @@ const PlaceItem = (props) => {
             <Button inverse onClick={openMapHandler}>
               VIEW ON MAP
             </Button>
-            {isLoggedIn && <Button to={`/places/${props.id}`}>EDIT</Button>}
-            {isLoggedIn && (
+            {isLoggedIn && userId === props.creatorId && (
+              <Button to={`/places/${props.id}`}>EDIT</Button>
+            )}
+            {isLoggedIn && userId === props.creatorId && (
               <Button danger onClick={showDeleteWarningHandler}>
                 DELETE
               </Button>
