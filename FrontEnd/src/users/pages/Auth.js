@@ -3,6 +3,7 @@ import React, { useState, useContext } from 'react';
 import Card from '../../shared/components/UIElements/Card';
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 import {
@@ -104,6 +105,7 @@ const Auth = (props) => {
               onInput={inputHandler}
             />
           )}
+          {!isLoginMode && <ImageUpload id='image' center />}
           <Input
             element='input'
             id='email'
