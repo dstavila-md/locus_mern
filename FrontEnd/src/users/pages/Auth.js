@@ -46,7 +46,7 @@ const Auth = (props) => {
         };
         const responseData = await sendRequest(url, method, body, headers);
 
-        login();
+        login(responseData.user.id);
       } catch (error) {
         // Error handling is managed in the useHttpClient hook
       }
@@ -64,7 +64,7 @@ const Auth = (props) => {
         };
         const responseData = await sendRequest(url, method, body, headers);
 
-        login();
+        login(responseData.user.id);
       } catch (error) {
         // Error handling is managed in the useHttpClient hook
       }

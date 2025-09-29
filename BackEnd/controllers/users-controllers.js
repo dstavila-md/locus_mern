@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 
 const User = require('../models/user');
 const HttpError = require('../models/http-error');
+const user = require('../models/user');
 
 const getUsers = async (req, res, next) => {
   let users;
@@ -79,7 +80,10 @@ const login = async (req, res, next) => {
       new HttpError('Invalid credentials, could not log you in.', 401)
     );
   }
-  res.json({ message: 'Logged in !' });
+  res.json({
+    message: 'Logged in !',
+    user: identifiedUser.toObject({ getters: true }),
+  });
 };
 
 module.exports = { getUsers, signup, login };
