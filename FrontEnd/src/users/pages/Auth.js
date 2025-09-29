@@ -75,12 +75,16 @@ const Auth = (props) => {
   const switchModeHandler = () => {
     if (!isLoginMode) {
       setFormData(
-        { ...formState.inputs, name: undefined },
+        { ...formState.inputs, name: undefined, image: undefined },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
     } else
       setFormData(
-        { ...formState.inputs, name: { value: '', isValid: false } },
+        {
+          ...formState.inputs,
+          name: { value: '', isValid: false },
+          image: { value: null, isValid: false },
+        },
         false
       );
     setIsLoginMode((prevMode) => !prevMode);
@@ -105,7 +109,9 @@ const Auth = (props) => {
               onInput={inputHandler}
             />
           )}
-          {!isLoginMode && <ImageUpload id='image' center />}
+          {!isLoginMode && (
+            <ImageUpload id='image' center onInput={inputHandler} />
+          )}
           <Input
             element='input'
             id='email'
