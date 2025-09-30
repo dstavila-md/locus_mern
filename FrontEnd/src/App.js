@@ -18,21 +18,36 @@ const App = () => {
   const [token, setToken] = useState(null);
   const [userId, setUserId] = useState(null);
 
-  const login = useCallback((userId, token) => {
+  const login = useCallback((userId, token, expirationDate) => {
     setToken(token);
     setUserId(userId);
-    localStorage.setItem('userData', JSON.stringify({ userId, token }));
+    const tokenExpirationDate =
+      expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60);
+    localStorage.setItem(
+      'userData',
+      JSON.stringify({
+        userId,
+        token,
+        expiration: tokenExpirationDate.toISOString(),
+      })
+    );
   }, []);
 
   const logout = useCallback(() => {
     setToken(null);
     setUserId(null);
+    localStorage.removeItem('userData');
   }, []);
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem('userData'));
-    if (storedData && storedData.token && storedData.userId) {
-      login(storedData.userId, storedData.token);
+    if (storedData && storedData.token) {
+      const { userId, token, expiration } = storedData;
+      const expirationDate = new Date(expiration);
+      const currentDate = new Date();
+      if (expirationDate > currentDate) {
+        login(userId, token, expirationDate);
+      }
     }
   }, [login]);
 
