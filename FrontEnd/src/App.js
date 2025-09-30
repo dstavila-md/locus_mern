@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -7,6 +7,8 @@ import {
 } from 'react-router-dom';
 
 import { AuthContext } from './shared/context/auth-context';
+import { useAuth } from './shared/hooks/auth-hook';
+
 import Users from './users/pages/Users';
 import NewPlace from './places/pages/NewPlace';
 import UpdatePlace from './places/pages/UpdatePlace';
@@ -15,57 +17,7 @@ import UserPlaces from './places/pages/UserPlaces';
 import Auth from './users/pages/Auth';
 
 const App = () => {
-  const [token, setToken] = useState(null);
-  const [userId, setUserId] = useState(null);
-  const [tokenExpirationDate, setTokenExpirationDate] = useState(null);
-  const logoutTimer = useRef(null);
-
-  const login = useCallback((userId, token, expirationDate) => {
-    setToken(token);
-    setUserId(userId);
-
-    const updatedTokenExpirationDate =
-      expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60);
-    setTokenExpirationDate(updatedTokenExpirationDate);
-
-    localStorage.setItem(
-      'userData',
-      JSON.stringify({
-        userId,
-        token,
-        expiration: updatedTokenExpirationDate.toISOString(),
-      })
-    );
-  }, []);
-
-  const logout = useCallback(() => {
-    setToken(null);
-    setUserId(null);
-    setTokenExpirationDate(null);
-    localStorage.removeItem('userData');
-  }, []);
-
-  useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('userData'));
-    if (storedData && storedData.token) {
-      const { userId, token, expiration } = storedData;
-      const expirationDate = new Date(expiration);
-      const currentDate = new Date();
-      if (expirationDate > currentDate) {
-        login(userId, token, expirationDate);
-      }
-    }
-  }, [login]);
-
-  useEffect(() => {
-    if (token && tokenExpirationDate) {
-      const remainingTime =
-        tokenExpirationDate.getTime() - new Date().getTime();
-      logoutTimer.current = setTimeout(logout, remainingTime);
-    } else {
-      clearTimeout(logoutTimer.current);
-    }
-  }, [token, tokenExpirationDate, logout]);
+  const { token, userId, login, logout } = useAuth();
 
   let routes;
 

@@ -41,7 +41,7 @@ const getPlacesByUserId = async (req, res, next) => {
     );
   }
 
-  if (mongoPlaces && mongoPlaces.length > 0) {
+  if (mongoPlaces) {
     return res.json({
       places: mongoPlaces.map((place) => place.toObject({ getters: true })),
     });
