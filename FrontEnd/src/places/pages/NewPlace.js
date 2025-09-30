@@ -19,7 +19,7 @@ import { AuthContext } from '../../shared/context/auth-context';
 import './PlaceForm.css';
 
 const NewPlace = () => {
-  const { userId, token } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
   const [formState, inputChangeHandler] = useForm(
     {
       title: { value: '', isValid: false },
@@ -42,7 +42,6 @@ const NewPlace = () => {
     formData.append('title', formState.inputs.title.value);
     formData.append('description', formState.inputs.description.value);
     formData.append('address', formState.inputs.address.value);
-    formData.append('creator', userId);
     formData.append('image', formState.inputs.image.value);
 
     const body = formData;
