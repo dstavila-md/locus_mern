@@ -6,6 +6,7 @@ import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
 
 import {
   VALIDATOR_REQUIRE,
@@ -22,6 +23,7 @@ const NewPlace = () => {
   const [formState, inputChangeHandler] = useForm(
     {
       title: { value: '', isValid: false },
+      image: { value: null, isValid: false },
       description: { value: '', isValid: false },
       address: { value: '', isValid: false },
     },
@@ -35,13 +37,18 @@ const NewPlace = () => {
     event.preventDefault();
     const url = 'http://localhost:5000/api/places';
     const method = 'POST';
-    const body = JSON.stringify({
-      title: formState.inputs.title.value,
-      description: formState.inputs.description.value,
-      address: formState.inputs.address.value,
-      creator: userId,
-    });
-    const headers = { 'Content-Type': 'application/json' };
+
+    const formData = new FormData();
+    formData.append('title', formState.inputs.title.value);
+    formData.append('description', formState.inputs.description.value);
+    formData.append('address', formState.inputs.address.value);
+    formData.append('creator', userId);
+    formData.append('image', formState.inputs.image.value);
+
+    const body = formData;
+    const headers = {
+      // 'Content-Type': 'application/json', // Not needed when using FormData
+    };
 
     try {
       await sendRequest(url, method, body, headers);
@@ -63,6 +70,12 @@ const NewPlace = () => {
           validators={[VALIDATOR_REQUIRE()]}
           onInput={inputChangeHandler}
           errorText='Please enter a valid title'
+        />
+        <ImageUpload
+          id='image'
+          center
+          onInput={inputChangeHandler}
+          errorText='Please provide an image.'
         />
         <Input
           id='description'
