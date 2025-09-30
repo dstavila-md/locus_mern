@@ -4,6 +4,10 @@ const HttpError = require('../models/http-error');
 const { jwtSecret: JWT_SECRET } = require('../utils/keys');
 
 module.exports = (req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    return next();
+  }
+
   const bearerToken = req.headers.authorization; // Authorization: Bearer <token>
   if (!bearerToken) {
     return next(new HttpError('Authentication failed!', 401));

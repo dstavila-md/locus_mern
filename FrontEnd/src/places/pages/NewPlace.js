@@ -19,7 +19,7 @@ import { AuthContext } from '../../shared/context/auth-context';
 import './PlaceForm.css';
 
 const NewPlace = () => {
-  const { userId } = useContext(AuthContext);
+  const { userId, token } = useContext(AuthContext);
   const [formState, inputChangeHandler] = useForm(
     {
       title: { value: '', isValid: false },
@@ -46,8 +46,10 @@ const NewPlace = () => {
     formData.append('image', formState.inputs.image.value);
 
     const body = formData;
+
     const headers = {
       // 'Content-Type': 'application/json', // Not needed when using FormData
+      Authorization: 'Bearer ' + token,
     };
 
     try {

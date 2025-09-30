@@ -22,7 +22,7 @@ const UpdatePlace = (props) => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedPlace, sendLoadedPlace] = useState(null);
   const placeId = useParams().placeId;
-  const { userId } = useContext(AuthContext);
+  const { userId, token } = useContext(AuthContext);
   const history = useHistory();
   const [formState, inputChangeHandler, setFormData] = useForm(
     {
@@ -67,7 +67,10 @@ const UpdatePlace = (props) => {
       title: formState.inputs.title.value,
       description: formState.inputs.description.value,
     });
-    const headers = { 'Content-Type': 'application/json' };
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token,
+    };
     try {
       await sendRequest(url, method, body, headers);
       history.push(`/${userId}/places`);
